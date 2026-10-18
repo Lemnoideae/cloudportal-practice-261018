@@ -1,6 +1,5 @@
 package com.programmers.be14.cloudportal_practice_261018.domain.auth.dto
 
-import com.programmers.be14.cloudportal_practice_261018.domain.user.entity.Role
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 
@@ -13,9 +12,7 @@ data class SignUpRequest(
     val password: String,
 
     @field:NotBlank(message = "유저 이름은 필수입니다.")
-    val username: String,
-
-    val role: Role = Role.DEVELOPER
+    val username: String
 )
 
 data class LoginRequest(

@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: cloudportal-practice-261018-test
+  datasource:
+    url: jdbc:h2:mem:cloudportal_test;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    open-in-view: false
+    show-sql: false
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+
+jwt:
+  header: Authorization
+  secret: dGhpcy1pcy1hLXNhbXBsZS1zZWNyZXQta2V5LWZvci1qd3QtdGVzdGluZy1wdXJwb3Nlcy1vbmx5Cg==
+  access-token-expiration-seconds: 1800
+  refresh-token-expiration-seconds: 604800

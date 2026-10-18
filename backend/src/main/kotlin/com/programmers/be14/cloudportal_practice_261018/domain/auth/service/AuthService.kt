@@ -3,6 +3,7 @@ package com.programmers.be14.cloudportal_practice_261018.domain.auth.service
 import com.programmers.be14.cloudportal_practice_261018.domain.auth.dto.LoginRequest
 import com.programmers.be14.cloudportal_practice_261018.domain.auth.dto.SignUpRequest
 import com.programmers.be14.cloudportal_practice_261018.domain.auth.dto.TokenResponse
+import com.programmers.be14.cloudportal_practice_261018.domain.user.entity.Role
 import com.programmers.be14.cloudportal_practice_261018.domain.user.entity.User
 import com.programmers.be14.cloudportal_practice_261018.domain.user.repository.UserRepository
 import com.programmers.be14.cloudportal_practice_261018.global.security.JwtTokenProvider
@@ -24,16 +25,21 @@ class AuthService(
             "이미 가입된 이메일입니다: ${request.email}"
         }
 
-        val user = passwordEncoder.encode(request.password)?.let {
-            User(
-                email = request.email,
-                passwordHash = it,
-                username = request.username,
-                role = request.role
-            )
+        val passwordHash = checkNotNull(passwordEncoder
+            .encode(request.password)) {
+            "비밀번호 인코딩 결과가 없습니다."
         }
 
-        return userRepository.save(user)?.id!!
+        val user = User(
+            email = request.email,
+            passwordHash = passwordHash,
+            username = request.username,
+            role = Role.DEVELOPER
+        )
+
+        return checkNotNull(userRepository.save(user).id) {
+            "저장된 사용자의 ID가 없습니다."
+        }
     }
 
     fun login(request: LoginRequest): TokenResponse {
