@@ -16,7 +16,7 @@ class JwtTokenProvider(
     @Value($$"${jwt.secret}")
     secret: String,
 
-    @Value($$"${jwt.access-token-expiration-seconds")
+    @Value($$"${jwt.access-token-expiration-seconds}")
     private val accessTokenExpirationSeconds: Long
 ) {
     private val key: SecretKey = Keys.hmacShaKeyFor(
