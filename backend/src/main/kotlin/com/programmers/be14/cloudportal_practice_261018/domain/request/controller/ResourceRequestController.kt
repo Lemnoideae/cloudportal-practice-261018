@@ -9,7 +9,6 @@ import com.programmers.be14.cloudportal_practice_261018.global.security.UserPrin
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -25,7 +24,6 @@ class ResourceRequestController(
     private val resourceRequestService: ResourceRequestService
 ) {
     // 1. 자원 신청: DEVELOPER만 신청 가능
-    @PreAuthorize("hasRole('DEVELOPER')")
     @PostMapping
     fun createRequest(
         @AuthenticationPrincipal principal: UserPrincipal,
@@ -47,7 +45,7 @@ class ResourceRequestController(
     }
 
     // 3. 전체 신청서 목록 조회: 관리자(DEVOPS_ADMIN) 및 감시자(AUDITOR)만 가능
-    @PreAuthorize("hasAnyRole('DEVOPS_ADMIN', 'AUDITOR')")
+    @GetMapping
     fun getAllRequests(
         @RequestParam(required = false) status: RequestStatus?
     ): ResponseEntity<List<ResourceResponseDto>> {
@@ -57,17 +55,16 @@ class ResourceRequestController(
     }
 
     // 4. 신청 취소: 소유권 인가 검증 적용 (본인이 작성한 글이어야 취소 가능)
-    @PreAuthorize("@requestSecurity.isOwner(#id, principal)")
-    @PostMapping
+    @PostMapping("/{id}/cancel")
     fun cancelRequest(
-        @PathVariable id: Long
+        @PathVariable id: Long,
+        @AuthenticationPrincipal principal: UserPrincipal
     ): ResponseEntity<Unit> {
-        resourceRequestService.cancelRequest(id)
+        resourceRequestService.cancelRequest(principal.id, id)
         return ResponseEntity.noContent().build()
     }
 
     // 5. 관리자 승인: DEVOPS_ADMIN만 가능
-    @PreAuthorize("hasRole('DEVOPS_ADMIN')")
     @PostMapping("/{id}/approve")
     fun approveRequest(
         @PathVariable id: Long,
@@ -78,7 +75,6 @@ class ResourceRequestController(
     }
 
     // 6. 관리자 반려: DEVOPS_ADMIN만 가능
-    @PreAuthorize("hasRole('DEVOPS_ADMIN')")
     @PostMapping("/{id}/reject")
     fun rejectRequest(
         @PathVariable id: Long,
