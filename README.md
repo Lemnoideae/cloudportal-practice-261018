@@ -22,3 +22,5 @@ Java → Kotlin 마이그레이션에 대비해 **Kotlin과 Spring Boot, 특히 
 ## 상세 문서
 
 프로젝트 범위와 설계·구현 기준은 [.agents/README.md](.agents/README.md)에서 안내합니다.
+
+현재 코드의 문제와 수정 예시, 적용 후 검증 방법은 [리뷰 수정 가이드](.agents/guides/review-fixes/README.md)에 정리했습니다.
