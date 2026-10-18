@@ -1,11 +1,15 @@
 package com.programmers.be14.cloudportal_practice_261018.global.error
 
+import com.programmers.be14.cloudportal_practice_261018.domain.request.exception.RequestStateConflictException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.orm.ObjectOptimisticLockingFailureException
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 
 data class ErrorResponse(
     val error: String,
@@ -37,13 +41,6 @@ class GlobalExceptionHandler {
         .body(ErrorResponse("BAD_REQUEST", e.message
             ?: "현재 상태에서는 처리할 수 없습니다."))
 
-    // check() 상태 머신 규칙 위반 ->  409 Conflict
-    @ExceptionHandler(IllegalStateException::class)
-    fun handleIllegalStateException(e: IllegalStateException
-    ): ResponseEntity<ErrorResponse> = ResponseEntity.status(HttpStatus.CONFLICT)
-        .body(ErrorResponse("CONFLICT", e.message
-            ?: "현재 상태에서는 처리할 수 없습니다."))
-
     // 리소스 미존재 -> 404 Not Found
     @ExceptionHandler(NoSuchElementException::class)
     fun handleNoSuchElementException(e: NoSuchElementException
@@ -51,4 +48,31 @@ class GlobalExceptionHandler {
         .body(ErrorResponse("NOT_FOUND", e.message
             ?: "대상을 찾을 수 없습니다."))
 
+    // 업무 상태 충돌 -> 409 Conflict
+    @ExceptionHandler(RequestStateConflictException::class)
+    fun handleRequestStateConflictException(e: RequestStateConflictException
+    ): ResponseEntity<ErrorResponse> = ResponseEntity.status(HttpStatus.CONFLICT)
+        .body(ErrorResponse("INVALID_TRANSITION", e.message
+            ?: "현재 상태에서는 처리할 수 없습니다."))
+
+    // 잠금 충돌 -> 409 Conflict
+    @ExceptionHandler(ObjectOptimisticLockingFailureException::class)
+    fun handleConcurrentDecision(e: ObjectOptimisticLockingFailureException
+    ): ResponseEntity<ErrorResponse> = ResponseEntity.status(HttpStatus.CONFLICT)
+        .body(ErrorResponse("CONCURRENT_MODIFICATION",
+            "다른 처리가 먼저 반영되었습니다. 다시 조회해주세요."))
+
+    // 필수 필드 누락, null, 잘못된 enum -> 400 Bad Request
+    @ExceptionHandler(HttpMessageNotReadableException::class)
+    fun handleUnreadableRequest(e: HttpMessageNotReadableException
+    ): ResponseEntity<ErrorResponse> = ResponseEntity.badRequest()
+        .body(ErrorResponse("INVALID_REQUEST",
+            "요청 형식과 필수 입력값을 확인해주세요."))
+
+    // 쿼리 파라미터·경로 변수 타입/enum 바인딩 실패 -> 400 Bad Request
+    @ExceptionHandler(MethodArgumentTypeMismatchException::class)
+    fun handleTypeMismatchException(e: MethodArgumentTypeMismatchException
+    ): ResponseEntity<ErrorResponse> = ResponseEntity.badRequest()
+        .body(ErrorResponse("INVALID_REQUEST",
+            "요청 형식과 필수 입력값을 확인해주세요."))
 }

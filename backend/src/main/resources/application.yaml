@@ -8,14 +8,14 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
+    open-in-view: false
+    show-sql: true
     hibernate:
       ddl-auto: update
     properties:
-      hibernate: 
+      hibernate:
         format_sql: true
         default_batch_fetch_size: 100
-      show-sql: true
-      open-in-view: false
 
 jwt:
   header: Authorization
