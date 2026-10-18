@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/cloudportal-practice-261018.iml" filepath="$PROJECT_DIR$/.idea/cloudportal-practice-261018.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.programmers.be14.cloudportal-practice-261018.iml" filepath="$PROJECT_DIR$/.idea/modules/com.programmers.be14.cloudportal-practice-261018.iml" />
     </modules>
   </component>
 </project>
