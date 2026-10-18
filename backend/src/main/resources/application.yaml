@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: cloudportal-practice-261018
+  datasource:
+    url: jdbc:mysql://localhost:3306/cloudportal?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
+    username: root
+    password: akr3274
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate: 
+        format_sql: true
+        default_batch_fetch_size: 100
+      show-sql: true
+      open-in-view: false
+
+jwt:
+  header: Authorization
+  secret: dGhpcy1pcy1hLXNhbXBsZS1zZWNyZXQta2V5LWZvci1qd3QtdGVzdGluZy1wdXJwb3Nlcy1vbmx5Cg==
+  access-token-expiration-seconds: 1800
+  refresh-token-expiration-seconds: 604800
